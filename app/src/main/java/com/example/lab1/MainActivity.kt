@@ -14,41 +14,47 @@ import android.widget.Toast
 
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var textView: TextView;
     private lateinit var radioGroup: RadioGroup;
     private lateinit var radioButton: RadioButton;
     private lateinit var textInput: TextInputEditText;
+    private lateinit var f1: Fragment1;
+    private lateinit var f2: Fragment2;
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        textView = findViewById(R.id.textView)
+
         radioGroup = findViewById(R.id.radioGroup)
         textInput = findViewById(R.id.textInput)
-        textView.setText("")
 
     }
 
     fun showText(view: View) {
-        val text: String = textInput.text.toString()
-        val selectedOption: Int = radioGroup!!.checkedRadioButtonId
-        textView.setText(text)
-        if(selectedOption != -1 && text!="") {
-            radioButton = findViewById(selectedOption)
+        try {
+            val text: String = textInput.text.toString()
+            val selectedOption: Int = radioGroup!!.checkedRadioButtonId
+            val bundle = Bundle()
+            if (selectedOption != -1 && text != "") {
+                radioButton = findViewById(selectedOption)
 
-            val color = radioButton.text.toString()
-            if (color == "Purple")
-                textView.setTextColor(getResources().getColor(R.color.purple_200))
-            else if (color == "Teal")
-                textView.setTextColor(getResources().getColor(R.color.teal_200))
-            else if (color == "Blue")
-                textView.setTextColor(getResources().getColor(R.color.purple_700))
-        }
-        else{
-            val toast = Toast.makeText(this@MainActivity, "Завершити введення всіх даних.", Toast.LENGTH_LONG)
-            toast.show()
+                val color = radioButton.text.toString()
+                f1 = Fragment1();
+                bundle.putString("fragment_text", text)
+                bundle.putString("fragment_text_color", color)
+                f1.arguments = bundle
+                supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer, f1).addToBackStack(null).commit()
+            } else {
+                Toast.makeText(
+                    this@MainActivity,
+                    "Завершити введення всіх даних.",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }catch (e: Exception) {
+            e.printStackTrace()
         }
     }
     fun hideText(view: View) {
-        textView.setText("")
+        f2 = Fragment2();
+        supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer, f2).addToBackStack(null).commit()
     }
 }
